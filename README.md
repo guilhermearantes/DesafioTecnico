@@ -1,32 +1,110 @@
 # Desafio Técnico Objective
 
-Este projeto é uma solução para o desafio técnico proposto pela Objective, desenvolvido em .NET 9.
+Este projeto é uma solução para o desafio técnico proposto pela Objective, desenvolvido em .NET 9. O objetivo é criar uma API para gestão bancária que permita criar contas e realizar transações financeiras, seguindo regras específicas de negócio.
 
 ## Tecnologias Utilizadas
 
-- .NET 9
 - C#
-- Visual Studio
+- .NET 9
+- Visual Studio 2022 
+- xUnit 
+- Entity Framework Core
+- SQL Server
 
 ## Como Executar
 
 1. Clone o repositório:
+   ```sh
+   git clone https://github.com/guilhermearantes/DesafioTecnicoObjective.git
+   ```
 2. Abra a solução no Visual Studio.
 3. Restaure os pacotes NuGet.
-4. Execute o projeto pressionando `F5` ou utilizando o menu "Iniciar Depuração".
+4. Execute o projeto pelo comando:
+   ```sh
+   dotnet run --project DesafioTecnicoObjective
+   ```
+   Ou pressione `F5` no Visual Studio.
 
-## Estrutura do Projeto
+## Como Rodar os Testes
 
-- `DesafioTecnicoObjective/` - Contém o código-fonte principal do desafio.
-- `README.md` - Este arquivo de documentação.
+- Via Visual Studio: utilize o Test Explorer.
+- Via terminal:
+   ```sh
+   dotnet test
+   ```
 
-## Testes
+## Endpoints da API
 
-Para rodar os testes, utilize o Test Explorer do Visual Studio ou execute o comando.
+### Criar Conta
 
-## Contato
+`POST /conta`
 
-Dúvidas ou sugestões? Entre em contato pelo e-mail: guilherme.jannotti@gmail.com
+**Exemplo de Request:**
+```json
+{ "numero_conta": 234, "saldo": 180.37 }
+```
+**Response 201:**
+```json
+{ "numero_conta": 234, "saldo": 180.37 }
+```
+**Se a conta já existe:** HTTP 409
+
+---
+
+### Realizar Transação
+
+`POST /transacao`
+
+**Exemplo de Request:**
+```json
+{ "forma_pagamento": "D", "numero_conta": 234, "valor": 10 }
+```
+**Response 201:**
+```json
+{ "numero_conta": 234, "saldo": 170.07 }
+```
+- **Saldo insuficiente:** HTTP 404, mensagem `"Saldo insuficiente."`
+- **Conta não encontrada:** HTTP 404, mensagem `"Conta não encontrada."`
+
+---
+
+### Consultar Conta
+
+`GET /conta?numero_conta=234`
+
+**Response 200:**
+```json
+{ "numero_conta": 234, "saldo": 170.07 }
+```
+- **Conta não encontrada:** HTTP 404, mensagem `"Conta não encontrada."`
+
+---
+
+## Regras de Negócio
+
+- Cartão de Débito: taxa de 3%
+- Cartão de Crédito: taxa de 5%
+- Pix: sem taxa
+- Não é permitido saldo negativo
+- Não existe cheque especial
+- Não é possível criar conta já existente
+
+## Decisões Técnicas e Boas Práticas
+
+- **Injeção de dependência** para serviços.
+- **Separação de camadas** (Controller, Service, Repository).
+- **DTOs** para entrada e saída dos endpoints.
+- **Testes unitários e de integração** cobrindo os principais fluxos e regras de negócio.
+
+  
+ ## Patterns aplicados:
+ 
+- Strategy: Cálculo de taxa por forma de pagamento.
+- Factory: Instancia a strategy correta.
+- Decorator: Logging em estratégias de taxa.
+- DTO: Separação de transporte de dados e domínio.
+- Service Layer: Centraliza regras de negócio.
+- Repository: Abstração do acesso a dados.
 
 
 ## Observação sobre o uso de float nos valores monetários 
