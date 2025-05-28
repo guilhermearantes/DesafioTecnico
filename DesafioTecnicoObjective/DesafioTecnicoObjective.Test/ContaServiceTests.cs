@@ -4,6 +4,7 @@ using DesafioTecnicoObjective.Repositories;
 using DesafioTecnicoObjective.Services;
 using DesafioTecnicoObjective.Models;
 using DesafioTecnicoObjective.DTOs;
+using DesafioTecnicoObjective.Exceptions;
 
 namespace DesafioTecnicoObjective.Tests
 {
@@ -80,16 +81,16 @@ namespace DesafioTecnicoObjective.Tests
         /// Testa se uma transação com saldo insuficiente retorna null e não atualiza a conta.
         /// </summary>
         [Fact]
-        public void RealizarTransacao_SaldoInsuficiente_DeveRetornarNull()
+        public void RealizarTransacao_SaldoInsuficiente_DeveLancarExcecao()
         {
-            var conta = new Conta { NumeroConta = 123, Saldo = 5 }; // menor que 10 + taxa
-            _repoMock.Setup(r => r.GetByNumero(123)).Returns(conta);
+            // Arrange
+            var dto = new TransacaoCreateDto("D", 123, 1000f); // valor maior que o saldo
+            var repoMock = new Mock<IContaRepository>();
+            repoMock.Setup(r => r.GetByNumero(123)).Returns(new Conta { NumeroConta = 123, Saldo = 100f });
+            var service = new ContaService(repoMock.Object);
 
-            var dto = new TransacaoCreateDto { NumeroConta = 123, FormaPagamento = "d", Valor = 10 };
-            var result = _service.RealizarTransacao(dto);
-
-            Assert.Null(result);
-            _repoMock.Verify(r => r.Update(It.IsAny<Conta>()), Times.Never);
+            // Act & Assert
+            Assert.Throws<SaldoInsuficienteException>(() => service.RealizarTransacao(dto));
         }
 
         /// <summary>
@@ -185,11 +186,58 @@ namespace DesafioTecnicoObjective.Tests
             _repoMock.Setup(r => r.GetByNumero(987)).Returns(conta);
 
             var dto = new TransacaoCreateDto { NumeroConta = 987, FormaPagamento = "C", Valor = 10 };
-            var result = _service.RealizarTransacao(dto);
 
-            Assert.Null(result);
+            Assert.Throws<SaldoInsuficienteException>(() => _service.RealizarTransacao(dto));
             _repoMock.Verify(r => r.Update(It.IsAny<Conta>()), Times.Never);
         }
 
+        [Fact]
+        public void GetStrategy_DeveLancarExcecao_ParaFormaPagamentoInvalida()
+        {
+            Assert.Throws<InvalidOperationException>(() => TaxaStrategyFactory.GetStrategy("X"));
+        }
+
+        [Fact]
+        public void DebitoStrategy_DeveCalcularTaxaCorretamente()
+        {
+            var strategy = new DebitoStrategy();
+            var taxa = strategy.CalcularTaxa(100);
+            Assert.Equal(3, taxa); 
+        }
+
+        [Fact]
+        public void CalcularTaxa_DeveChamarEstrategiaInterna()
+        {
+            // Arrange
+            var mockStrategy = new Mock<ITaxaStrategy>();
+            mockStrategy.Setup(s => s.CalcularTaxa(100)).Returns(10);
+
+            var decorator = new LogTaxaStrategyDecorator(mockStrategy.Object);
+
+            // Act
+            var taxa = decorator.CalcularTaxa(100);
+
+            // Assert
+            Assert.Equal(10, taxa);
+            mockStrategy.Verify(s => s.CalcularTaxa(100), Times.Once);
+        }
+
+        [Fact]
+        public void CalcularTaxa_DeveLogarNoConsole()
+        {
+            var mockStrategy = new Mock<ITaxaStrategy>();
+            mockStrategy.Setup(s => s.CalcularTaxa(It.IsAny<float>())).Returns(5);
+
+            var decorator = new LogTaxaStrategyDecorator(mockStrategy.Object);
+
+            using var sw = new StringWriter();
+            Console.SetOut(sw);
+
+            decorator.CalcularTaxa(50);
+
+            var output = sw.ToString();
+            Assert.Contains("Calculando taxa", output);
+            Assert.Contains("Taxa calculada", output);
+        }
     }
 }

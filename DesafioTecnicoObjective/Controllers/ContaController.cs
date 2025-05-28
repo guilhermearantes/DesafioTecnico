@@ -33,15 +33,8 @@ namespace DesafioTecnicoObjective.Controllers
         [HttpPost]
         public IActionResult CriarConta([FromBody] ContaCreateDto dto)
         {
-            try
-            {
-                var conta = _service.CriarConta(dto);
-                return Created("", conta);
-            }
-            catch
-            {
-                return Conflict("Conta já existe.");
-            }
+            var conta = _service.CriarConta(dto);
+            return Created("", conta);
         }
 
         /// <summary>

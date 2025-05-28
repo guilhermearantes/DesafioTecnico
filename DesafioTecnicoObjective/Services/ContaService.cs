@@ -1,4 +1,5 @@
 ﻿using DesafioTecnicoObjective.DTOs;
+using DesafioTecnicoObjective.Exceptions;
 using DesafioTecnicoObjective.Models;
 using DesafioTecnicoObjective.Repositories;
 using System;
@@ -65,50 +66,34 @@ namespace DesafioTecnicoObjective.Services
             if (conta == null)
                 throw new InvalidOperationException("Conta não encontrada.");
 
-            var formaPagamento = dto.FormaPagamento.ToUpper();
-            float taxa = CalcularTaxa(formaPagamento, dto.Valor);
+            var strategy = TaxaStrategyFactory.GetStrategy(dto.FormaPagamento);
+            strategy = new LogTaxaStrategyDecorator(strategy);
+            float taxa = strategy.CalcularTaxa(dto.Valor);
 
             float total = dto.Valor + taxa;
             if (conta.Saldo < total)
-                return null; // saldo insuficiente
+                throw new SaldoInsuficienteException("Saldo insuficiente.");
 
             conta.Saldo -= total;
             _repo.Update(conta);
             return conta;
         }
 
-        /// <summary>
-        /// Calcula a taxa de acordo com a forma de pagamento e valor da transação.
-        /// </summary>
-        /// <param name="formaPagamento">Forma de pagamento (D, C, P).</param>
-        /// <param name="valor">Valor da transação.</param>
-        /// <returns>Valor da taxa calculada.</returns>
-        /// <exception cref="InvalidOperationException">Lançada se a forma de pagamento for inválida.</exception>
-        private float CalcularTaxa(string formaPagamento, float valor)
-        {
-            return formaPagamento switch
-            {
-                "D" => valor * 0.03f,
-                "C" => valor * 0.05f,
-                "P" => 0.0f,
-                _ => throw new InvalidOperationException("Forma de pagamento inválida. Informe D (debito), C (credito) ou P (pix).")
-            };
-        }
-    }
 
-    /// <summary>
-    /// Fábrica para criação de objetos Conta a partir de DTOs.
-    /// </summary>
-    public static class ContaFactory
-    {
         /// <summary>
-        /// Cria uma nova instância de Conta a partir de um DTO de criação de conta.
+        /// Fábrica para criação de objetos Conta a partir de DTOs.
         /// </summary>
-        /// <param name="dto">DTO com os dados necessários para criação da conta.</param>
-        /// <returns>Nova instância de <see cref="Conta"/>.</returns>
-        public static Conta CriarConta(ContaCreateDto dto)
+        public static class ContaFactory
         {
-            return new Conta { NumeroConta = dto.NumeroConta, Saldo = dto.Saldo };
+            /// <summary>
+            /// Cria uma nova instância de Conta a partir de um DTO de criação de conta.
+            /// </summary>
+            /// <param name="dto">DTO com os dados necessários para criação da conta.</param>
+            /// <returns>Nova instância de <see cref="Conta"/>.</returns>
+            public static Conta CriarConta(ContaCreateDto dto)
+            {
+                return new Conta { NumeroConta = dto.NumeroConta, Saldo = dto.Saldo };
+            }
         }
     }
 }
