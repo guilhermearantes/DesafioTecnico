@@ -75,7 +75,7 @@ namespace DesafioTecnicoObjective.Services
 
             float total = dto.Valor + taxa;
             if (conta.Saldo < total)
-                throw new SaldoInsuficienteException("Saldo insuficiente.");
+                throw new SaldoInsuficienteException();
 
             conta.Saldo -= total;
             _repo.Update(conta);

@@ -116,5 +116,92 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Integration
                 Console.SetOut(originalOut);
             }
         }
+
+        /// <summary>
+        /// Testa se o decorator LogTaxaStrategyDecorator está sendo utilizado durante a transação,
+        /// verificando se as mensagens de log são escritas no console ao calcular a taxa.
+        /// </summary>
+        [Fact]
+        public void RealizarTransacao_DeveLogarNoConsole()
+        {
+            var service = CriarServiceComDb(out var context);
+            var conta = new Conta { NumeroConta = 10, Saldo = 100 };
+            context.Contas.Add(conta);
+            context.SaveChanges();
+
+            var dto = new TransacaoCreateDto { NumeroConta = 10, FormaPagamento = "D", Valor = 10 };
+
+            var originalOut = Console.Out;
+            using var sw = new StringWriter();
+            Console.SetOut(sw);
+
+            try
+            {
+                service.RealizarTransacao(dto);
+
+                var output = sw.ToString();
+                Assert.Contains("Calculando taxa", output);
+                Assert.Contains("Taxa calculada", output);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+        }
+        /// <summary>
+        /// Testa se tentar realizar uma transação em uma conta inexistente lança exceção.
+        /// </summary>
+        [Fact]
+        public void RealizarTransacao_ContaInexistente_DeveLancarExcecao()
+        {
+            var service = CriarServiceComDb(out _);
+            var dto = new TransacaoCreateDto { NumeroConta = 999, FormaPagamento = "D", Valor = 10 };
+
+            var ex = Assert.Throws<ContaNotFoundException>(() => service.RealizarTransacao(dto));
+            Assert.Contains("Conta não encontrada.", ex.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Testa se criar uma conta duplicada lança exceção.
+        /// </summary>
+        [Fact]
+        public void CriarConta_Duplicada_DeveLancarExcecao()
+        {
+            var service = CriarServiceComDb(out _);
+            var dto = new ContaCreateDto { NumeroConta = 1, Saldo = 100 };
+            service.CriarConta(dto);
+
+            var ex = Assert.Throws<ContaJaExisteException>(() => service.CriarConta(dto));
+            Assert.Contains("Conta já existe.", ex.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Testa se realizar uma transação com forma de pagamento inválida lança exceção.
+        /// </summary>
+        [Fact]
+        public void RealizarTransacao_FormaPagamentoInvalida_DeveLancarExcecao()
+        {
+            var service = CriarServiceComDb(out var context);
+            var conta = new Conta { NumeroConta = 5, Saldo = 100 };
+            context.Contas.Add(conta);
+            context.SaveChanges();
+
+            var dto = new TransacaoCreateDto { NumeroConta = 5, FormaPagamento = "X", Valor = 10 };
+
+            var ex = Assert.Throws<InvalidOperationException>(() => service.RealizarTransacao(dto));
+            Assert.Contains("forma de pagamento", ex.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Testa se obter uma conta inexistente lança exceção.
+        /// </summary>
+        [Fact]
+        public void ObterConta_ContaInexistente_DeveLancarExcecao()
+        {
+            var service = CriarServiceComDb(out _);
+
+            Assert.Throws<ContaNotFoundException>(() => service.ObterConta(999));
+        }
+
     }
 }

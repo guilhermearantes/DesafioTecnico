@@ -255,5 +255,19 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
                 Console.SetOut(originalOut);
             }
         }
+        /// <summary>
+        /// Testa se o saldo e valor das transações realmente são do tipo float.
+        /// </summary>
+        [Fact]
+        public void Propriedades_SaldoEValor_DevemSerFloat()
+        {
+            var conta = new Conta { NumeroConta = 1, Saldo = 123.45f };
+            var dtoConta = new ContaCreateDto { NumeroConta = 2, Saldo = 67.89f };
+            var dtoTransacao = new TransacaoCreateDto { NumeroConta = 1, FormaPagamento = "P", Valor = 10.5f };
+
+            Assert.IsType<float>(conta.Saldo);
+            Assert.IsType<float>(dtoConta.Saldo);
+            Assert.IsType<float>(dtoTransacao.Valor);
+        }
     }
 }
