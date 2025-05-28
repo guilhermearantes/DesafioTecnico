@@ -6,7 +6,7 @@ using DesafioTecnicoObjective.Models;
 using DesafioTecnicoObjective.DTOs;
 using DesafioTecnicoObjective.Exceptions;
 
-namespace DesafioTecnicoObjective.Tests
+namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
 {
     /// <summary>
     /// Testes unitários para a classe ContaService, cobrindo cenários de criação de conta e transações.

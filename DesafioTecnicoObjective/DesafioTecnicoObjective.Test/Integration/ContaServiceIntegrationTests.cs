@@ -6,7 +6,7 @@ using DesafioTecnicoObjective.DTOs;
 using DesafioTecnicoObjective.Repositories;
 using DesafioTecnicoObjective.Exceptions;
 
-namespace DesafioTecnicoObjective.IntegrationTest
+namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Integration
 {
 
     /// <summary>
