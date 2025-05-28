@@ -28,6 +28,7 @@ namespace DesafioTecnicoObjective.Exceptions
                 {
                     SaldoInsuficienteException => (int)HttpStatusCode.NotFound,
                     ContaNotFoundException => (int)HttpStatusCode.NotFound,
+                    FormaPagamentoInvalidoException => (int)HttpStatusCode.BadRequest,
                     InvalidOperationException => (int)HttpStatusCode.BadRequest,
                     _ => (int)HttpStatusCode.InternalServerError
                 };

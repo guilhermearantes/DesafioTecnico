@@ -102,7 +102,7 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
 
             var dto = new TransacaoCreateDto { NumeroConta = 123, FormaPagamento = "x", Valor = 10 };
 
-            Assert.Throws<InvalidOperationException>(() => _service.RealizarTransacao(dto));
+            Assert.Throws<FormaPagamentoInvalidoException>(() => _service.RealizarTransacao(dto));
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
         [Fact]
         public void GetStrategy_DeveLancarExcecao_ParaFormaPagamentoInvalida()
         {
-            Assert.Throws<InvalidOperationException>(() => TaxaStrategyFactory.GetStrategy("X"));
+            Assert.Throws<FormaPagamentoInvalidoException>(() => TaxaStrategyFactory.GetStrategy("X"));
         }
 
         [Fact]
@@ -269,5 +269,16 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
             Assert.IsType<float>(dtoConta.Saldo);
             Assert.IsType<float>(dtoTransacao.Valor);
         }
+
+        [Fact]
+        public void RealizarTransacao_ContaInexistente_DeveLancarContaNotFoundException()
+        {
+            var numeroContaInexistente = 999;
+            var dto = new TransacaoCreateDto { NumeroConta = 999, FormaPagamento = "D", Valor = 10 };
+            _repoMock.Setup(r => r.GetByNumero(numeroContaInexistente)).Returns((Conta)null);
+
+            Assert.Throws<ContaNotFoundException>(() => _service.RealizarTransacao(dto));
+        }
+
     }
 }

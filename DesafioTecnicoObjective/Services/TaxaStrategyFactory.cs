@@ -1,4 +1,6 @@
-﻿namespace DesafioTecnicoObjective.Services
+﻿using DesafioTecnicoObjective.Exceptions;
+
+namespace DesafioTecnicoObjective.Services
 {
     public static class TaxaStrategyFactory
     {
@@ -13,7 +15,7 @@
                 "D" => new DebitoStrategy(),
                 "C" => new CreditoStrategy(),
                 "P" => new PixStrategy(),
-                _ => throw new InvalidOperationException("Forma de pagamento inválida. Informe D (debito), C (credito) ou P (pix).")
+                _ => throw new FormaPagamentoInvalidoException("Forma de pagamento inválida. Informe D (debito), C (credito) ou P (pix).")
             };
         }
     }

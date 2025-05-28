@@ -5,6 +5,8 @@ using DesafioTecnicoObjective.Services;
 using DesafioTecnicoObjective.DTOs;
 using DesafioTecnicoObjective.Repositories;
 using DesafioTecnicoObjective.Exceptions;
+using System.Net;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Integration
 {
@@ -188,8 +190,8 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Integration
 
             var dto = new TransacaoCreateDto { NumeroConta = 5, FormaPagamento = "X", Valor = 10 };
 
-            var ex = Assert.Throws<InvalidOperationException>(() => service.RealizarTransacao(dto));
-            Assert.Contains("forma de pagamento", ex.Message, StringComparison.OrdinalIgnoreCase);
+            var ex = Assert.Throws<FormaPagamentoInvalidoException>(() => service.RealizarTransacao(dto));
+            Assert.Contains("Forma de pagamento", ex.Message, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -202,6 +204,35 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Integration
 
             Assert.Throws<ContaNotFoundException>(() => service.ObterConta(999));
         }
+
+        /// <summary>
+        /// Testa o endpoint de transação da API para garantir que,
+        /// ao tentar realizar uma transação com uma forma de pagamento inválida,
+        /// a API retorna o status HTTP 400 (BadRequest) e uma mensagem de erro apropriada.
+        /// O teste cobre o fluxo completo: criação de conta válida, tentativa de transação inválida
+        /// e validação da resposta.
+        /// </summary>
+        [Fact]
+        public async Task RealizarTransacao_FormaPagamentoInvalida_DeveRetornarStatus400()
+        {
+            // Arrange
+            await using var application = new WebApplicationFactory<Program>();
+            var client = application.CreateClient();
+
+            // Cria uma conta válida antes
+            var contaDto = new ContaCreateDto { NumeroConta = 1001, Saldo = 100 };
+            await client.PostAsJsonAsync("/conta", contaDto);
+
+            // Tenta realizar transação com forma de pagamento inválida
+            var transacaoDto = new TransacaoCreateDto { NumeroConta = 1001, FormaPagamento = "X", Valor = 10 };
+            var response = await client.PostAsJsonAsync("/transacao", transacaoDto);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Contains("Forma de pagamento", content, StringComparison.OrdinalIgnoreCase);
+        }
+
 
     }
 }
