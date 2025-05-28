@@ -7,9 +7,7 @@ namespace DesafioTecnicoObjective.Exceptions
     /// </summary>
     public class ContaNotFoundException : Exception
     {
-        public ContaNotFoundException()
-        {
-        }
+        public ContaNotFoundException() : base("Conta não encontrada.") { }
 
         public ContaNotFoundException(string message)
             : base(message)

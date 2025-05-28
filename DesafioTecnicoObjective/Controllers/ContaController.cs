@@ -1,4 +1,5 @@
 ﻿using DesafioTecnicoObjective.DTOs;
+using DesafioTecnicoObjective.Exceptions;
 using DesafioTecnicoObjective.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,9 +34,17 @@ namespace DesafioTecnicoObjective.Controllers
         [HttpPost]
         public IActionResult CriarConta([FromBody] ContaCreateDto dto)
         {
-            var conta = _service.CriarConta(dto);
-            return Created("", conta);
+            try
+            {
+                var conta = _service.CriarConta(dto);
+                return CreatedAtAction(nameof(ObterConta), new { numeroConta = conta.NumeroConta }, conta);
+            }
+            catch (ContaJaExisteException ex)
+            {
+                return Conflict(ex.Message); // HTTP 409
+            }
         }
+
 
         /// <summary>
         /// Obtém as informações de uma conta bancária pelo número da conta.

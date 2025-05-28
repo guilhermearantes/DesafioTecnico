@@ -50,7 +50,7 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
             var dto = new ContaCreateDto { NumeroConta = 123, Saldo = 100 };
             _repoMock.Setup(r => r.Exists(dto.NumeroConta)).Returns(true);
 
-            Assert.Throws<InvalidOperationException>(() => _service.CriarConta(dto));
+            Assert.Throws<ContaJaExisteException>(() => _service.CriarConta(dto));
         }
 
         /// <summary>

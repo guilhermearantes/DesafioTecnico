@@ -31,7 +31,7 @@ namespace DesafioTecnicoObjective.Services
         public Conta CriarConta(ContaCreateDto dto)
         {
             if (_repo.Exists(dto.NumeroConta))
-                throw new InvalidOperationException("Conta já existe.");
+                throw new ContaJaExisteException();
 
             var conta = ContaFactory.CriarConta(dto);
             _repo.Add(conta);
@@ -64,7 +64,7 @@ namespace DesafioTecnicoObjective.Services
         {
             var conta = _repo.GetByNumero(dto.NumeroConta);
             if (conta == null)
-                throw new InvalidOperationException("Conta não encontrada.");
+                throw new ContaNotFoundException();
 
             var strategy = TaxaStrategyFactory.GetStrategy(dto.FormaPagamento);
             strategy = new LogTaxaStrategyDecorator(strategy);
