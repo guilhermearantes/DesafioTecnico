@@ -230,14 +230,20 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
 
             var decorator = new LogTaxaStrategyDecorator(mockStrategy.Object);
 
+            var originalOut = Console.Out;
             using var sw = new StringWriter();
-            Console.SetOut(sw);
-
-            decorator.CalcularTaxa(50);
-
-            var output = sw.ToString();
-            Assert.Contains("Calculando taxa", output);
-            Assert.Contains("Taxa calculada", output);
+            try
+            {
+                Console.SetOut(sw);
+                decorator.CalcularTaxa(50);
+                var output = sw.ToString();
+                Assert.Contains("Calculando taxa", output);
+                Assert.Contains("Taxa calculada", output);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
         }
     }
 }
