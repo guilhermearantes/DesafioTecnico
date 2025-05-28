@@ -26,6 +26,7 @@ namespace DesafioTecnicoObjective.Exceptions
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = ex switch
                 {
+                    SaldoInsuficienteException => (int)HttpStatusCode.NotFound,
                     ContaNotFoundException => (int)HttpStatusCode.NotFound,
                     InvalidOperationException => (int)HttpStatusCode.BadRequest,
                     _ => (int)HttpStatusCode.InternalServerError

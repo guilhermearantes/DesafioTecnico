@@ -42,11 +42,14 @@ namespace DesafioTecnicoObjective.Services
         /// Obtém as informações de uma conta pelo número da conta.
         /// </summary>
         /// <param name="numeroConta">Número identificador da conta.</param>
-        /// <returns>DTO com as informações da conta, ou null se não encontrada.</returns>
-        public ContaResponseDto? ObterConta(int numeroConta)
+        /// <returns>DTO com as informações da conta.</returns>
+        /// <exception cref="ContaNotFoundException">Lançada se a conta não for encontrada.</exception>
+        public ContaResponseDto ObterConta(int numeroConta)
         {
             var conta = _repo.GetByNumero(numeroConta);
-            if (conta == null) return null;
+            if (conta == null)
+                throw new ContaNotFoundException();
+
             return new ContaResponseDto
             {
                 NumeroConta = conta.NumeroConta,

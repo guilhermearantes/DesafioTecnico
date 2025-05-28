@@ -77,21 +77,19 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
             _repoMock.Verify(r => r.Update(It.IsAny<Conta>()), Times.Once);
         }
 
-        /// <summary>
-        /// Testa se uma transação com saldo insuficiente retorna null e não atualiza a conta.
-        /// </summary>
         [Fact]
         public void RealizarTransacao_SaldoInsuficiente_DeveLancarExcecao()
         {
-            // Arrange
-            var dto = new TransacaoCreateDto("D", 123, 1000f); // valor maior que o saldo
+            var dto = new TransacaoCreateDto("D", 123, 1000f);
             var repoMock = new Mock<IContaRepository>();
             repoMock.Setup(r => r.GetByNumero(123)).Returns(new Conta { NumeroConta = 123, Saldo = 100f });
             var service = new ContaService(repoMock.Object);
 
-            // Act & Assert
-            Assert.Throws<SaldoInsuficienteException>(() => service.RealizarTransacao(dto));
+            var ex = Assert.Throws<SaldoInsuficienteException>(() => service.RealizarTransacao(dto));
+            Assert.Equal("Saldo insuficiente.", ex.Message);
+            Assert.Equal(404, ex.StatusCode);
         }
+
 
         /// <summary>
         /// Testa se uma transação com forma de pagamento inválida lança exceção.
@@ -174,6 +172,18 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
             Assert.NotNull(result);
             Assert.Equal(654, result.NumeroConta);
             Assert.Equal(200, result.Saldo);
+        }
+
+        /// <summary>
+        /// Testa se o método ObterConta lança exceção ao buscar por uma conta inexistente.
+        /// </summary>
+        [Fact]
+        public void ObterConta_ContaInexistente_DeveLancarContaNotFoundException()
+        {         
+            var numeroContaInexistente = 999;
+            _repoMock.Setup(r => r.GetByNumero(numeroContaInexistente)).Returns((Conta)null);
+
+            Assert.Throws<ContaNotFoundException>(() => _service.ObterConta(numeroContaInexistente));
         }
 
         /// <summary>
