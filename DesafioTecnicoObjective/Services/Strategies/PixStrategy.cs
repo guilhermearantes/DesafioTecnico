@@ -1,4 +1,4 @@
-﻿namespace DesafioTecnicoObjective.Services
+﻿namespace DesafioTecnicoObjective.Services.Strategies
 {
     public class PixStrategy : ITaxaStrategy
     {

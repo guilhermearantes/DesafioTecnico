@@ -2,6 +2,7 @@
 using DesafioTecnicoObjective.Exceptions;
 using DesafioTecnicoObjective.Models;
 using DesafioTecnicoObjective.Repositories;
+using DesafioTecnicoObjective.Services.Strategies;
 using System;
 
 namespace DesafioTecnicoObjective.Services

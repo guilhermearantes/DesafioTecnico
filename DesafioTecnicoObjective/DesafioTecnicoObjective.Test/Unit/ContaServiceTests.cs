@@ -5,6 +5,7 @@ using DesafioTecnicoObjective.Services;
 using DesafioTecnicoObjective.Models;
 using DesafioTecnicoObjective.DTOs;
 using DesafioTecnicoObjective.Exceptions;
+using DesafioTecnicoObjective.Services.Strategies;
 
 namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
 {

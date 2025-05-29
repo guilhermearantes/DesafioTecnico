@@ -1,4 +1,4 @@
-﻿namespace DesafioTecnicoObjective.Services
+﻿namespace DesafioTecnicoObjective.Services.Strategies
 {
     /// <summary>
     /// Decorador de estratégia de taxa que adiciona logs ao processo de cálculo de taxa.

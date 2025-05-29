@@ -1,6 +1,6 @@
 ﻿using DesafioTecnicoObjective.Exceptions;
 
-namespace DesafioTecnicoObjective.Services
+namespace DesafioTecnicoObjective.Services.Strategies
 {
     public static class TaxaStrategyFactory
     {
