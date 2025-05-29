@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	<ParallelizeTestCollections>false</ParallelizeTestCollections>
+	<NoWarn>$(NoWarn);7022</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

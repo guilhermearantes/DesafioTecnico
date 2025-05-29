@@ -181,7 +181,7 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
         public void ObterConta_ContaInexistente_DeveLancarContaNotFoundException()
         {         
             var numeroContaInexistente = 999;
-            _repoMock.Setup(r => r.GetByNumero(numeroContaInexistente)).Returns((Conta)null);
+            _repoMock.Setup(r => r.GetByNumero(numeroContaInexistente)).Returns((Conta?)null);
 
             Assert.Throws<ContaNotFoundException>(() => _service.ObterConta(numeroContaInexistente));
         }
@@ -275,7 +275,7 @@ namespace DesafioTecnicoObjective.DesafioTecnicoObjective.Test.Unit
         {
             var numeroContaInexistente = 999;
             var dto = new TransacaoCreateDto { NumeroConta = 999, FormaPagamento = "D", Valor = 10 };
-            _repoMock.Setup(r => r.GetByNumero(numeroContaInexistente)).Returns((Conta)null);
+            _repoMock.Setup(r => r.GetByNumero(numeroContaInexistente)).Returns((Conta?)null);
 
             Assert.Throws<ContaNotFoundException>(() => _service.RealizarTransacao(dto));
         }
