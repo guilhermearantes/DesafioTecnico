@@ -85,8 +85,9 @@ namespace DesafioTecnicoObjective.Services
 
         /// <summary>
         /// Fábrica para criação de objetos Conta a partir de DTOs.
+        /// Esta classe é um detalhe de implementação interna e só faz sentido no contexto da ContaService.
         /// </summary>
-        public static class ContaFactory
+        private static class ContaFactory
         {
             /// <summary>
             /// Cria uma nova instância de Conta a partir de um DTO de criação de conta.
