@@ -6,10 +6,10 @@ Este projeto é uma solução para o desafio técnico proposto pela Objective, d
 
 - C#
 - .NET 9
-- Visual Studio 2022 
-- xUnit 
 - Entity Framework Core
-- SQL Server
+- xUnit 
+- Visual Studio 2022 
+- SQL Server Management Studio
 
 ## Como Executar
 
