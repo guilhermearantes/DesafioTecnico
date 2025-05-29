@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DesafioTecnicoObjective.Models
 {
@@ -11,6 +12,7 @@ namespace DesafioTecnicoObjective.Models
         /// Número identificador da conta.
         /// </summary>
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int NumeroConta { get; set; }
 
         /// <summary>
