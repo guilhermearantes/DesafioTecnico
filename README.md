@@ -11,14 +11,35 @@ Este projeto é uma solução para o desafio técnico proposto pela Objective, d
 - Visual Studio 2022 
 - SQL Server Management Studio
 
+
+## Pré Requisitos
+
+1. .NET 9 SDK instalado.
+2. SQL Server LocalDB (instalado junto com o Visual Studio)
+3. Ferramenta Entity Framework Core CLI instalada globalmente
+
 ## Como Executar
 
-1. Clone o repositório:
+1. Clone o repositório e acesse a pasta do projeto
    ```sh
    git clone https://github.com/guilhermearantes/DesafioTecnicoObjective.git
    ```
-2. Abra a solução no Visual Studio.
-3. Restaure os pacotes NuGet.
+   ```sh
+   cd DesafioTecnicoObjective
+   ```
+
+2. Restaure os pacotes (opcional)
+
+   ```sh
+   dotnet restore
+   ```
+
+3. Crie o banco de dados e aplique as migrations.
+
+   ```sh
+   dotnet ef database update --context ContaDbContext
+   ```
+
 4. Execute o projeto pelo comando:
    ```sh
    dotnet run --project DesafioTecnicoObjective
