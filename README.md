@@ -1,4 +1,4 @@
-# Desafio Técnico Objective
+# Desafio Técnico 
 
 Este projeto é uma solução para o desafio técnico proposto pela Objective, desenvolvido em .NET 9. O objetivo é criar uma API para gestão bancária que permita criar contas e realizar transações financeiras, seguindo regras específicas de negócio.
 
